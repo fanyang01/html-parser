@@ -1,4 +1,4 @@
-package fanyang01;
+package crawler;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +23,7 @@ class Node {
 }
 
 enum Direction {CHILD, SIBLING}
+
 public class Parser {
 
     public Node parse(InputStream in) throws IOException {
@@ -33,7 +34,7 @@ public class Parser {
         Direction direction = Direction.CHILD;
         Stack<Node> stack = new Stack<Node>();
 
-		stack.push(root);
+        stack.push(root);
         LOOP:
         do {
             token = t.next();
@@ -44,8 +45,12 @@ public class Parser {
                     Node node = new Node(NodeType.ERROR);
                     node.value = token.value;
                     switch (direction) {
-                        case CHILD: x.child = node; break;
-                        case SIBLING: x.siblings = node; break;
+                        case CHILD:
+                            x.child = node;
+                            break;
+                        case SIBLING:
+                            x.siblings = node;
+                            break;
                     }
                     break LOOP;
                 case SKIP:
@@ -55,8 +60,12 @@ public class Parser {
                     node.value = token.value;
                     node.attr = token.attr;
                     switch (direction) {
-                        case CHILD: x.child = node; break;
-                        case SIBLING: x.siblings = node; break;
+                        case CHILD:
+                            x.child = node;
+                            break;
+                        case SIBLING:
+                            x.siblings = node;
+                            break;
                     }
                     x = node;
                     stack.push(node);
@@ -71,8 +80,12 @@ public class Parser {
                     node.value = token.value;
                     node.attr = token.attr;
                     switch (direction) {
-                        case CHILD: x.child = node; break;
-                        case SIBLING: x.siblings = node; break;
+                        case CHILD:
+                            x.child = node;
+                            break;
+                        case SIBLING:
+                            x.siblings = node;
+                            break;
                     }
                     x = node;
                     direction = Direction.SIBLING;
@@ -81,13 +94,17 @@ public class Parser {
                     node = new Node(NodeType.TEXT);
                     node.value = token.value;
                     switch (direction) {
-                        case CHILD: x.child = node; break;
-                        case SIBLING: x.siblings = node; break;
+                        case CHILD:
+                            x.child = node;
+                            break;
+                        case SIBLING:
+                            x.siblings = node;
+                            break;
                     }
                     x = node;
                     direction = Direction.SIBLING;
                     break;
-				default:
+                default:
             }
         } while (true);
         return root;
