@@ -139,35 +139,67 @@ public class Tokenizer {
 
         unget(ch);
         String tagName = lexTagName();
-        String rest = lexToEndBracket();
         Token token;
-        if (tagName.length() == 0)
+        if (tagName.length() == 0) {
             return new Token(TokenType.ERROR, "empty tagname");
-        if (tagName.equals("script") || tagName.equals("style")) {
-            lexToEndTag(tagName);
         }
-        if (rest.endsWith("/")) {
-            rest = rest.substring(0, rest.length() - 1);
-            token = new Token(TokenType.SELF_CLOSING_TAG, tagName);
-        } else if (selfclosingTags.containsKey(tagName)) {
+        if (selfclosingTags.containsKey(tagName)) {
             token = new Token(TokenType.SELF_CLOSING_TAG, tagName);
         } else {
             token = new Token(TokenType.START_TAG, tagName);
         }
-
-        String[] attrs = rest.trim().split(" ");
-        for (String kv : attrs) {
-            if (kv.length() == 0) continue;
-            if (kv.indexOf('=') == -1 || kv.endsWith("=")) {
-                token.attr.put(kv, "true");
-                continue;
-            }
-            String[] arr = kv.split("=", 2);
-            String k = arr[0];
-            String v = arr[1].substring(1, arr[1].length() - 1);
-            token.attr.put(k, v);
+        lexAttr(token);
+        if (tagName.equals("script") || tagName.equals("style")) {
+            lexToEndTag(tagName);
         }
         return token;
+    }
+
+    private void lexAttr(Token token) throws IOException {
+        int ch;
+        while(true) {
+            StringBuilder key = new StringBuilder();
+            StringBuilder value = new StringBuilder();
+            ch = get();
+            if(ch == '>') {
+                break;
+            } else if(isLetter(ch)) {
+                key.append((char)ch);
+                while(isLetterDigit(ch = get()) || ch == '-')
+                    key.append((char)ch);
+                if(Character.isSpaceChar(ch) || ch == '>') {
+                    unget(ch);
+                    token.attr.put(key.toString(), "true");
+                    continue;
+                } else if(ch == '=') {
+                    int quote = get();
+                    if(quote != '\'' && quote != '"') { // assume non-quoted value is valid
+                        value.append(quote);
+                        while (isLetterDigit(ch = get()))
+                            value.append((char)ch);
+                        unget(ch);
+                    } else {
+                        while ((ch = get()) != quote)
+                            value.append((char) ch);
+                    }
+                    token.attr.put(key.toString(), value.toString());
+                    continue;
+                } else {
+                    token.type = TokenType.ERROR;
+                    token.value = "bad key/value syntax: " + (char)ch;
+                    return;
+                }
+            } else if(Character.isSpaceChar(ch)) {
+                continue;
+            } else if(ch == '/' && peek() == '>') {
+                token.type = TokenType.SELF_CLOSING_TAG;
+                continue;
+            } else {
+                token.type = TokenType.ERROR;
+                token.value = "bad tag syntax: " + (char)ch;
+                return;
+            }
+        }
     }
 
     private void lexToEndTag(String tag) throws IOException {
