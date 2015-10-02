@@ -33,17 +33,16 @@ public class Parser {
         Direction direction = Direction.CHILD;
         Stack<Node> stack = new Stack<Node>();
 
+		stack.push(root);
         LOOP:
         do {
             token = t.next();
-            System.err.printf("TOKEN=%s value='%s'\n", token.type, token.value);
             switch (token.type) {
                 case EOF:
                     break LOOP;
                 case ERROR:
                     Node node = new Node(NodeType.ERROR);
                     node.value = token.value;
-
                     switch (direction) {
                         case CHILD: x.child = node; break;
                         case SIBLING: x.siblings = node; break;
@@ -55,7 +54,6 @@ public class Parser {
                     node = new Node(NodeType.ELEMENT);
                     node.value = token.value;
                     node.attr = token.attr;
-
                     switch (direction) {
                         case CHILD: x.child = node; break;
                         case SIBLING: x.siblings = node; break;
@@ -72,7 +70,6 @@ public class Parser {
                     node = new Node(NodeType.ELEMENT);
                     node.value = token.value;
                     node.attr = token.attr;
-
                     switch (direction) {
                         case CHILD: x.child = node; break;
                         case SIBLING: x.siblings = node; break;
@@ -90,6 +87,7 @@ public class Parser {
                     x = node;
                     direction = Direction.SIBLING;
                     break;
+				default:
             }
         } while (true);
         return root;
