@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 public class StringUtils {
 
-    public static final String unescapeHtml3(final String input) {
+    public static final String unescapeHtml(final String input) {
         StringWriter writer = null;
         int len = input.length();
         int i = 1;

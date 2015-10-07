@@ -90,7 +90,7 @@ public class Main {
 
                 System.out.printf("TEXT CONTENT for selector '%s':\n", selector);
                 System.out.printf("------------------------------------------------\n");
-                System.out.println(StringUtils.unescapeHtml3(s.toString().trim()));
+                System.out.println(StringUtils.unescapeHtml(s.toString().trim()));
             } catch (Exception e) {
                 e.printStackTrace();
                 continue;
@@ -167,7 +167,7 @@ class Selector {
                     if(!x.attr.containsKey("id") || !x.attr.get("id").equals(id))
                         break;
                 if(className.length() > 0)
-                    if(!x.attr.containsKey("calss")|| !x.attr.get("class").contains(className))
+                    if(!x.attr.containsKey("class")|| !x.attr.get("class").contains(className))
                         break;
                 extractText(x, text);
                 return;
