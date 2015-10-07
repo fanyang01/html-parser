@@ -26,8 +26,8 @@ enum Direction {CHILD, SIBLING}
 
 public class Parser {
 
-    public Node parse(InputStream in) throws IOException {
-        Tokenizer t = new Tokenizer(in);
+    public Node parse(InputStream in, String charset) throws IOException {
+        Tokenizer t = new Tokenizer(in, charset);
         Token token;
         Node root = new Node(NodeType.DOCUMENT);
         Node x = root;

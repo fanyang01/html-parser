@@ -25,7 +25,7 @@ class Token {
 }
 
 public class Tokenizer {
-    final BufferedReader r;
+    private BufferedReader r;
     private static Map<String, Object> selfclosingTags;
     private static String[] tags = {
             "area", "base", "br", "col", "command",
@@ -39,9 +39,12 @@ public class Tokenizer {
     private Queue<Token> queue = new LinkedList<Token>();
 
     public Tokenizer(InputStream in) throws UnsupportedEncodingException {
+        this(in, "UTF-8");
+    }
+    public Tokenizer(InputStream in, String charset) throws UnsupportedEncodingException {
         buf = new int[256];
         pos = 0; // next free slot
-        r = new BufferedReader(new InputStreamReader(in));
+        r = new BufferedReader(new InputStreamReader(in, charset));
         writer = new CharArrayWriter();
         selfclosingTags = new HashMap<String, Object>();
         for (String tag : tags)
