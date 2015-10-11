@@ -123,11 +123,14 @@ class Selector {
         for (String s : ss) {
             if (s.length() != 0) {
                 sbd.append("(\\w+>)*");
-                sbd.append(s);
+                sbd.append(s + ">");
             }
         }
+		String p = sbd.toString();
+		if(p.endsWith(">"))
+			p = p.substring(0, p.length()-1);
         // sbd.append("(\\w+>)*");
-        pattern = Pattern.compile(sbd.toString());
+        pattern = Pattern.compile(p);
     }
 
     public void select(Node x, StringBuilder text) throws Exception {
